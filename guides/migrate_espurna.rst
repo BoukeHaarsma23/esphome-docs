@@ -20,7 +20,7 @@ file. Then, generate and download the binary:
 
   .. figure:: images/download_binary.png
 
-- **Using the command line**: run ``esphome livingroom.yaml compile`` (replacing
+- **Using the command line**: run ``esphome compile livingroom.yaml`` (replacing
   ``livingroom.yaml`` with your configuration file of course) and navigate to the
   ``<NODE_NAME>/.pioenvs/<NODE_NAME>/`` folder. There you will find a ``firmware.bin`` file,
   this is the binary you will upload.
@@ -52,12 +52,8 @@ Happy Hacking!
 See Also
 --------
 
-- :doc:`/devices/nodemcu_esp8266`
-- :doc:`/devices/nodemcu_esp32`
-- :doc:`/devices/esp8266`
-- :doc:`/devices/esp32`
-- :doc:`/devices/sonoff_s20`
-- :doc:`/devices/sonoff_4ch`
+- :doc:`/components/esp8266`
+- :doc:`/components/esp32`
 - :doc:`migrate_espeasy`
 - :doc:`migrate_sonoff_tasmota`
 - :ghedit:`Edit`

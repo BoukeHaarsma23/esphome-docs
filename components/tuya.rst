@@ -16,17 +16,9 @@ Put the ``tuya`` component in the config and it will list the possible devices f
 
 .. code-block:: yaml
 
-    # Make sure logging is not using the serial port
-    logger:
-      baud_rate: 0
-
-    uart:
-      rx_pin: GPIO3
-      tx_pin: GPIO1
-      baud_rate: 9600
-
     # Register the Tuya MCU connection
     tuya:
+
 
 Here is an example output for a Tuya fan controller:
 
@@ -66,7 +58,7 @@ Configuration variables:
 ------------------------
 
 - **time_id** (*Optional*, :ref:`config-id`): Some Tuya devices support obtaining local time from ESPHome.
-  Specify the ID of the :ref:`Time Component <time>` which will be used.
+  Specify the ID of the :doc:`time/index` which will be used.
 
 - **status_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): Some Tuya devices support WiFi status reporting ONLY through gpio pin.
   Specify the pin reported in the config dump or leave empty otherwise.
@@ -107,7 +99,7 @@ The type of ``x`` variable is depending on ``datapoint_type`` configuration vari
           datapoint_type: raw
           then:
             - lambda: |-
-                ESP_LOGD("main", "on_datapoint_update %s", hexencode(x).c_str());
+                ESP_LOGD("main", "on_datapoint_update %s", format_hex_pretty(x).c_str());
                 id(voltage).publish_state((x[0] << 8 | x[1]) * 0.1);
                 id(current).publish_state((x[3] << 8 | x[4]) * 0.001);
                 id(power).publish_state((x[6] << 8 | x[7]) * 0.1);
@@ -126,7 +118,7 @@ The type of ``x`` variable is depending on ``datapoint_type`` configuration vari
           then:
             - lambda: |-
                 if (x.type == tuya::TuyaDatapointType::RAW) {
-                  ESP_LOGD("main", "on_datapoint_update %s", hexencode(x.value_raw).c_str());
+                  ESP_LOGD("main", "on_datapoint_update %s", format_hex_pretty(x.value_raw).c_str());
                 } else {
                   ESP_LOGD("main", "on_datapoint_update %hhu", x.type);
                 }
@@ -148,5 +140,6 @@ See Also
 - :doc:`/components/binary_sensor/tuya`
 - :doc:`/components/sensor/tuya`
 - :doc:`/components/text_sensor/tuya`
+- :doc:`/components/number/tuya`
 - :apiref:`tuya/tuya.h`
 - :ghedit:`Edit`

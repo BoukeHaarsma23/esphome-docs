@@ -10,7 +10,7 @@ Component/Hub
 -------------
 
 The ``teleinfo`` component allows you to retrieve data from a
-French electrical counter using Teleinformation (`datasheet <https://www.enedis.fr/sites/default/files/Enedis-NOI-CPT_54E.pdf>`__). It works with Linky electrical
+French electrical counter using Teleinformation (`datasheet <https://www.enedis.fr/media/2035/download>`__). It works with Linky electrical
 counter but also legacy EDF electrical counter.
 
 .. figure:: images/teleinfo-full.jpg
@@ -52,18 +52,32 @@ simply press -/+ buttons on the counter and look for `Standard mode` or
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      id: uart_bus
-      rx_pin: GPIO3
-      tx_pin: GPIO1
-      baud_rate: 1200
-      parity: EVEN
-      data_bits: 7
-
     teleinfo:
       id: myteleinfo
-      update_interval: 60s
-      historical_mode: true
+
+
+Configuration variables:
+------------------------
+
+
+In teleinfo platform:
+
+- **historical_mode** (*Optional*): Whether to use historical mode or standard mode.
+  With historical mode, baudrate of 1200 must be used whereas 9600 must be used in
+  standard mode. Defaults to ``false``.
+
+- **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
+  sensor. Defaults to ``60s``.
+
+- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
+  to use multiple UART buses.
+
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation or multiple hubs.
+
+Sensor
+******
+
+.. code-block:: yaml
 
     sensor:
       - platform: teleinfo
@@ -85,40 +99,23 @@ simply press -/+ buttons on the counter and look for `Standard mode` or
         icon: mdi:flash
         teleinfo_id: myteleinfo
 
+- **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.
+- **teleinfo_id** (*Optional*, :ref:`config-id`): Specify the ID of used hub.
+- All other options from :ref:`Sensor <config-sensor>`.
+
+Text Sensor
+***********
+
+.. code-block:: yaml
+
     text_sensor:
       - platform: teleinfo
         tag_name: "OPTARIF"
         name: "optarif"
         teleinfo_id: myteleinfo
 
-Configuration variables:
-------------------------
-
-
-In teleinfo platform:
-
-- **historical_mode** (*Optional*): Whether to use historical mode or standard mode.
-  With historical mode, baudrate of 1200 must be used whereas 9600 must be used in
-  standard mode. Defaults to ``false``.
-
-- **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
-  sensor. Defaults to ``60s``.
-
-- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
-  to use multiple UART buses.
-
-Sensor
-******
-
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- All other options from :ref:`Sensor <config-sensor>`.
-
-Text Sensor
-***********
-
-- **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **teleinfo_id** (*Optional*, :ref:`config-id`): Specify the ID of used hub.
 - All other options from :ref:`Text Sensor <config-text_sensor>`.
 
 

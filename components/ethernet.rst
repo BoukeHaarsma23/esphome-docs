@@ -14,11 +14,11 @@ This component and the Wi-Fi component may **not** be used simultaneously, even 
 
 .. code-block:: yaml
 
-    # Example configuration entry
+    # Example configuration entry for RMII chips
     ethernet:
       type: LAN8720
-      mdc_pin: GPIO23
-      mdio_pin: GPIO18
+      mdc_pin: GPIOXX
+      mdio_pin: GPIOXX
       clk_mode: GPIO0_IN
       phy_addr: 0
 
@@ -28,11 +28,38 @@ This component and the Wi-Fi component may **not** be used simultaneously, even 
         gateway: 10.0.0.1
         subnet: 255.255.255.0
 
+.. code-block:: yaml
+
+    # Example configuration entry for SPI chips
+    ethernet:
+      type: W5500
+      clk_pin: GPIOXX
+      mosi_pin: GPIOXX
+      miso_pin: GPIOXX
+      cs_pin: GPIOXX
+      interrupt_pin: GPIOXX
+      reset_pin: GPIOXX
+
 Configuration variables:
 ------------------------
 
-- **type** (**Required**, string): The type of LAN chipset/phy. Must be one of
-  ``LAN8720``, ``TLK110`` or ``IP101`` (see datasheet for more details).
+- **type** (**Required**, string): The type of LAN chipset/phy.
+
+  Supported chipsets are:
+
+  - ``LAN8720`` (RMII)
+  - ``RTL8201`` (RMII)
+  - ``DP83848`` (RMII)
+  - ``IP101`` (RMII)
+  - ``JL1101`` (RMII)
+  - ``KSZ8081`` (RMII)
+  - ``KSZ8081RNA`` (RMII)
+  - ``W5500`` (SPI)
+  - ``OPENETH`` (QEMU, ESP-IDF only)
+
+RMII configuration variables:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 - **mdc_pin** (**Required**, :ref:`config-pin`): The MDC pin of the board.
   Usually this is ``GPIO23``.
 - **mdio_pin** (**Required**, :ref:`config-pin`): The MDIO pin of the board.
@@ -46,8 +73,51 @@ Configuration variables:
   - ``GPIO17_OUT`` - Internal clock
 
 - **phy_addr** (*Optional*, int): The PHY addr type of the Ethernet controller. Defaults to 0.
+- **phy_registers** (*Optional*, mapping): Arbitrary PHY register values to set after Ethernet initialization.
+
+  - **address** (**Required**, hex): The register address as a hex number (e.g. ``0x10`` for address 16)
+  - **value** (**Required**, hex): The value of the register to set as a hex number (e.g. ``0x1FFA``)
+  - **page_id** (*Optional*, hex): (RTL8201 only) Register page number to select before writing (e.g. ``0x07`` for page 7)
+
 - **power_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The pin controlling the
   power/reset status of the Ethernet controller. Leave unspecified for no power pin (default).
+
+SPI configuration variables:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **clk_pin** (**Required**, :ref:`config-pin`): The SPI clock pin.
+- **mosi_pin** (**Required**, :ref:`config-pin`): The SPI MOSI pin.
+- **miso_pin** (**Required**, :ref:`config-pin`): The SPI MISO pin.
+- **cs_pin** (**Required**, :ref:`config-pin`): The SPI chip select pin.
+- **interrupt_pin** (*Optional*, :ref:`config-pin`): The interrupt pin.
+  This variable is **required** for older frameworks. See below.
+- **reset_pin** (*Optional*, :ref:`config-pin`): The reset pin.
+- **clock_speed** (*Optional*, float): The SPI clock speed.
+  Any frequency between `8Mhz` and `80Mhz` is allowed, but the nearest integer division
+  of `80Mhz` is used, i.e. `16Mhz` (`80Mhz` / 5) is used when `15Mhz` is configured.
+  Default: `26.67Mhz`.
+- **polling_interval** (*Optional*, :ref:`config-time`): If ``interrupt_pin`` is not set,
+  set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
+  Older frameworks may not support this variable. See below for details.
+
+If you are using a framework with the latest version, ESPHome provides
+an SPI-based Ethernet module without interrupt pin.
+Support for SPI polling mode (no interrupt pin) is provided by the following frameworks:
+
+- ESP-IDF 5.3 or later
+- ESP-IDF 5.2.1 and later 5.2.x versions
+- ESP-IDF 5.1.4
+- Arduino-ESP32 3.0.0 or later (**Caution**: PlatformIO does not support these Arduino-ESP32 versions)
+
+When building with frameworks that support SPI polling mode, either ``interrupt_pin``
+or ``polling_interval`` can be set. If you set both, ESPHome will throw an error.
+
+If you are using a framework that does not support SPI-based ethernet modules without interrupt pin,
+``interrupt_pin`` is **required** and you cannot set ``polling_interval``.
+
+Advanced common configuration variables:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 - **manual_ip** (*Optional*): Manually configure the static IP of the node.
 
   - **static_ip** (**Required**, IPv4 address): The static IP of your node.
@@ -73,8 +143,14 @@ Configuration variables:
     clock signal that will not travel reliably over these types of connections. For more
     information and wiring details refer to the link in the *See also* section.
 
-Configuration for Olimex ESP32-POE
-----------------------------------
+.. note::
+
+    SPI based chips do *not* use :doc:`spi`. This means that SPI pins can't be shared with other devices.
+
+Configuration examples
+----------------------
+
+**Olimex ESP32-POE**:
 
 .. code-block:: yaml
 
@@ -86,8 +162,12 @@ Configuration for Olimex ESP32-POE
       phy_addr: 0
       power_pin: GPIO12
 
-Configuration for Olimex ESP32-EVB
-----------------------------------
+.. note::
+
+    WROVER version of Olimex POE cards change CLK to ping GPIO0, configuration must be `clk_mode: GPIO0_OUT`.
+
+
+**Olimex ESP32-EVB**:
 
 .. code-block:: yaml
 
@@ -98,8 +178,7 @@ Configuration for Olimex ESP32-EVB
       clk_mode: GPIO0_IN
       phy_addr: 0
 
-Configuration for Olimex ESP32-GATEWAY
---------------------------------------
+**Olimex ESP32-GATEWAY** and **LILYGO TTGO T-Internet-POE ESP32-WROOM LAN8270A**:
 
 .. code-block:: yaml
 
@@ -110,8 +189,7 @@ Configuration for Olimex ESP32-GATEWAY
       clk_mode: GPIO17_OUT
       phy_addr: 0
 
-Configuration for LILYGO TTGO T-Internet-POE ESP32-WROOM LAN8270A Chip
-----------------------------------------------------------------------
+**LILYGO TTGO T-Internet ESP32-WROVER-E LAN8270**:
 
 .. code-block:: yaml
 
@@ -119,11 +197,11 @@ Configuration for LILYGO TTGO T-Internet-POE ESP32-WROOM LAN8270A Chip
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO17_OUT
+      clk_mode: GPIO0_OUT
       phy_addr: 0
+      power_pin: GPIO04
 
-Configuration for Wireless Tag WT32-ETH01
------------------------------------------
+**Wireless Tag WT32-ETH01** and **SMLIGHT SLZB-06 PoE Zigbee**:
 
 .. code-block:: yaml
 
@@ -135,42 +213,7 @@ Configuration for Wireless Tag WT32-ETH01
       phy_addr: 1
       power_pin: GPIO16
 
-Configuration for OpenHacks LAN8720
------------------------------------
-
-.. code-block:: yaml
-
-    ethernet:
-      type: LAN8720
-      mdc_pin: GPIO23
-      mdio_pin: GPIO18
-      phy_addr: 1
-
-.. note::
-
-    This board has an issue that might cause the ESP32 to boot in program mode. When testing, make sure 
-    you are monitoring the serial output and reboot the device several times to see if it boots into the 
-    program properly.
-
-Configuration for wESP32 board (up to rev.6)
---------------------------------------------
-
-.. code-block:: yaml
-
-    ethernet:
-      type: LAN8720
-      mdc_pin: GPIO16
-      mdio_pin: GPIO17
-      clk_mode: GPIO0_IN
-      phy_addr: 0
-
-.. note::
-
-    Revision 7 and upwards of the wESP32 board does not have a LAN8720 chip. Until support for the 
-    replacement RTL8201 is included in ESPHome, the wESP board rev.7 will not work with the above configuration.
-
-Configuration for ESP32-Ethernet-Kit board
-------------------------------------------
+**M5Stack PoESP32** and **ESP32-Ethernet-Kit**:
 
 .. code-block:: yaml
 
@@ -182,10 +225,101 @@ Configuration for ESP32-Ethernet-Kit board
       phy_addr: 1
       power_pin: GPIO5
 
+**AiThinker ESP32-G Gateway**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: LAN8720
+      mdc_pin: GPIO23
+      mdio_pin: GPIO18
+      clk_mode: GPIO17_OUT
+      phy_addr: 1
+      power_pin: GPIO5
+
+**wESP32**:
+
+.. code-block:: yaml
+
+    # for board up to rev.5
+    ethernet:
+      type: LAN8720
+      mdc_pin: GPIO16
+      mdio_pin: GPIO17
+      clk_mode: GPIO0_IN
+      phy_addr: 0
+
+    # for board rev.7 and up
+    ethernet:
+      type: RTL8201
+      mdc_pin: GPIO16
+      mdio_pin: GPIO17
+      clk_mode: GPIO0_IN
+      phy_addr: 0
+      phy_registers:
+        - address: 0x10
+          value: 0x1FFA
+          page_id: 0x07
+
+
+.. note::
+
+    Revision 5 and below of the wESP32 board use the LAN8720 Ethernet PHY. Revision 7 and newer of it use the RTL8201 Ethernet PHY.
+
+
+**OpenHacks LAN8720**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: LAN8720
+      mdc_pin: GPIO23
+      mdio_pin: GPIO18
+      phy_addr: 1
+
+.. note::
+
+    This board has an issue that might cause the ESP32 to boot in program mode. When testing, make sure
+    you are monitoring the serial output and reboot the device several times to see if it boots into the
+    program properly.
+
+
+**Esp32-Stick-Eth** and **Esp32-Stick-PoE-P** and **Esp32-Stick-PoE-A**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: LAN8720
+      mdc_pin: GPIO23
+      mdio_pin: GPIO18
+      clk_mode: GPIO17_OUT
+      phy_addr: 1
+
+**LILYGO T-ETH-Lite ESP32**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: RTL8201
+      mdc_pin: GPIO23
+      mdio_pin: GPIO18
+      clk_mode: GPIO0_IN
+      phy_addr: 0
+      power_pin: GPIO12
+
+
+**QEMU qemu-system-xtensa**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: OPENETH
+
 See Also
 --------
 
 - :doc:`network`
+- :doc:`text_sensor/ethernet_info`
 - :apiref:`ethernet/ethernet_component.h`
 - `ESP32 Ethernet PHY connection info <https://pcbartists.com/design/embedded/esp32-ethernet-phy-schematic-design/>`__
 - :ghedit:`Edit`

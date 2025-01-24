@@ -42,8 +42,6 @@ Now you can create the light.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the light.
 - **dimmer_datapoint** (*Optional*, int): The datapoint id number of the dimmer value.
 - **min_value_datapoint** (*Optional*, int): The datapoint id number of the MCU minimum value
   setting.  If this is set then ESPHome will sync the **min_value** to the MCU on startup.
@@ -52,10 +50,17 @@ Configuration variables:
   change the brightness and would have to toggle the light using the physical buttons.
 - **color_temperature_datapoint** (*Optional*, int): The datapoint id number of the color
   temperature value.
-- **rgb_datapoint** (*Optional*, int): The datapoint id number of the RGB (red/green/blue) value.
-  If this is set then ESPHome will set the color using a 6 digit hex RGB value.
-- **hsv_datapoint** (*Optional*, int): The datapoint id number of the HSV (hue/saturation/value) value.
-  If this is set then ESPHome will set the color using a 12 digit hex HSV value.
+- **color_datapoint** (*Optional*, int): The datapoint id number of the color value.
+  If this is set, along with **color_type**, then ESPHome will set the color value formatted
+  based on the **color_type**.
+- **color_type** (*Optional*, enum): The color type to use when setting the **color_datapoint**.
+  If this is set, along with **color_datapoint**, then ESPHome will use this value to format
+  the color sent to **color_datapoint**.
+
+    - ``rgb``: Use a 6 digit hex RGB value
+    - ``hsv``: Use a 12 digit hex HSV value
+    - ``rgbhsv``: Use a 14 digit hex RGBHSV value
+
 - **min_value** (*Optional*, int): The lowest dimmer value allowed.  My dimmer had a
   minimum of 25 and wouldn't even accept anything lower, but this option is available if necessary.
   Defaults to 0.

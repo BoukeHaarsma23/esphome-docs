@@ -19,7 +19,7 @@ nearby COVID-19 exposure notification bluetooth messages sent by phones running 
         then:
           - lambda: |
               ESP_LOGD("main", "Got notification:");
-              ESP_LOGD("main", "  RPI: %s", hexencode(x.rolling_proximity_identifier).c_str());
+              ESP_LOGD("main", "  RPI: %s", format_hex_pretty(x.rolling_proximity_identifier).c_str());
               ESP_LOGD("main", "  RSSI: %d", x.rssi);
 
 Configuration variables:
@@ -52,7 +52,7 @@ minute, the indicator will be on.
 
     switch:
       - platform: gpio
-        pin: GPIO22
+        pin: GPIOXX
         id: led
 
     script:
@@ -67,7 +67,7 @@ minute, the indicator will be on.
         then:
           - lambda: |
               ESP_LOGD("main", "Got notification:");
-              ESP_LOGD("main", "  RPI: %s", hexencode(x.rolling_proximity_identifier).c_str());
+              ESP_LOGD("main", "  RPI: %s", format_hex_pretty(x.rolling_proximity_identifier).c_str());
               ESP_LOGD("main", "  RSSI: %d", x.rssi);
 
           # Stop existing timer so that turn_off doesn't get called
