@@ -37,7 +37,7 @@ for more information.
     This page refers to version V3 of the PZEM004T.
     For using the older V1 variant of this sensor please see :doc:`pzem004t <pzem004t>`.
 
-The communication with this integration is done over a :ref:`UART bus <uart>` using :ref:`Modbus <modbus>`.
+The communication with this component is done via a :ref:`UART <uart>` using :ref:`Modbus <modbus>`.
 You must therefore have a ``uart:`` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 
@@ -143,8 +143,12 @@ You must set the ``address`` of the ``modbus_controller`` to the current address
 
     modbus_controller:
       - id: pzem
-        ## the current device addr
+        # The current device address.
         address: 0x1
+        # The special address 0xF8 is a broadcast address accepted by any pzem device,
+        # so if you use this address, make sure there is only one pzem device connected
+        # to the uart bus. 
+        # address: 0xF8
         modbus_id: mod_bus_pzem
         command_throttle: 0ms
         setup_priority: -10

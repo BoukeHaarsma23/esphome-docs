@@ -10,6 +10,8 @@ for configuring Wi-Fi on an ESPHome device by using a serial connection to the d
 
 The ``improv_serial`` component requires the serial ``logger`` to be configured.
 
+The ``improv_serial`` component will use the project name and version instead of ESPHomes version whenever it's available.
+
 
 .. code-block:: yaml
 
@@ -20,7 +22,26 @@ The ``improv_serial`` component requires the serial ``logger`` to be configured.
     improv_serial:
 
 
-No configuration variables.
+Configuration variables
+-----------------------
+
+- **next_url** (*Optional*, url): A URL that can be used to forward the user to after setting credentials with improv.
+
+Next URL
+--------
+
+Substitutions can be inserted into the URL, such as project name and version and there are some special substitutions
+that can be performed by ESPHome when wrapped in double braces ``{{ }}``:
+
+- **device_name**: This will substitute the device name including the mac address suffix.
+- **ip_address**: This will substitute the IP address of the device.
+- **esphome_version**: This will substitute the version of ESPHome that is running on the device.
+
+.. code-block:: yaml
+
+    # Example next_url
+    improv_serial:
+      next_url: http://example.com/?device_name={{device_name}}&ip_address={{ip_address}}&esphome_version={{esphome_version}}
 
 See Also
 --------

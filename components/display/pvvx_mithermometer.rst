@@ -29,7 +29,7 @@ The firmware configuration can be changed via browser using `TelinkMiFlasher.htm
     esp32_ble_tracker:
 
     ble_client:
-    - mac_address: "A4:C1:38:B1:CD:7F"
+    - mac_address: XX:XX:XX:XX:XX:XX
       id: pvvx_ble_display
 
     display:
@@ -48,7 +48,7 @@ Configuration variables:
 ------------------------
 
 - **ble_client_id** (**Required**, :ref:`config-id`): ID of the associated BLE client.
-- **time_id** (*Optional*, :ref:`config-id`): ID of a :doc:`/components/time` component. If set, the time will be synchronized with every connection.
+- **time_id** (*Optional*, :ref:`config-id`): ID of a :doc:`/components/time/index`. If set, the time will be synchronized with every connection.
 - **disconnect_delay** (*Optional*, :ref:`config-time`): The amount of time the BLE connection is maintained before being disconnected again. Defaults to ``5s``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to transmit the display data. Defaults to ``60s``.
 - **validity_period** (*Optional*, :ref:`config-time`): The time periode for which the pvvx device should display the information. Defaults to ``5min``.
@@ -139,12 +139,12 @@ The following example display the sensor states of a MiFlora sensor on a pvvx di
     esp32_ble_tracker:
 
     ble_client:
-    - mac_address: "A4:C1:38:B1:CD:7F"
+    - mac_address: XX:XX:XX:XX:XX:XX
       id: pvvx_ble_display
 
     sensor:
     - platform: pvvx_mithermometer
-      mac_address: "A4:C1:38:B1:CD:7F"
+      mac_address: XX:XX:XX:XX:XX:XX
       temperature:
         name: "PVVX Temperature"
       humidity:
@@ -154,7 +154,7 @@ The following example display the sensor states of a MiFlora sensor on a pvvx di
       battery_voltage:
         name: "PVVX Battery-Voltage"
     - platform: xiaomi_hhccjcy01
-      mac_address: '94:2B:FF:5C:91:61'
+      mac_address: XX:XX:XX:XX:XX:XX
       temperature:
         name: "Xiaomi HHCCJCY01 Temperature"
         id: miflora_temperature
@@ -199,12 +199,12 @@ The following example will synchronized the time of the pvvx device once a day.
     esp32_ble_tracker:
 
     ble_client:
-    - mac_address: "A4:C1:38:B1:CD:7F"
+    - mac_address: XX:XX:XX:XX:XX:XX
       id: pvvx_ble_display
 
     sensor:
     - platform: pvvx_mithermometer
-      mac_address: "A4:C1:38:B1:CD:7F"
+      mac_address: XX:XX:XX:XX:XX:XX
       temperature:
         name: "PVVX Temperature"
       humidity:

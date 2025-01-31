@@ -25,7 +25,6 @@ using :ref:`lambdas <config-lambda>`.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the Select.
 - **options** (**Required**, list): The list of options this Select has.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda to be evaluated every update interval to get the current option of the select.
@@ -42,8 +41,11 @@ Configuration variables:
 - **initial_option** (*Optional*, string): The option to set the option to on setup if not
   restored with ``restore_value``.
   Cannot be used with ``lambda``. Defaults to the first option in the ``options`` list.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Select <config-select>`.
+
+.. note::
+
+    If you don't set a ``lambda`` and ``optimistic`` is ``false`` (default), updates to the select component state will need to be taken care of as part of your ``set_action`` using ``id(my_select).publish_state(x);`` (in a lambda). Do not use :ref:`select-set_action` here, as this would generate a loop. Also, don't use ``id(my_select).state = x`` as this won't have the desired effect (e.g. HA won't update with the change).
 
 ``select.set`` Action
 ---------------------

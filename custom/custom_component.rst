@@ -1,10 +1,29 @@
 Generic Custom Component
 ========================
 
-This integration can be used to create generic custom components in ESPHome
-using the C++ (Arduino) API. This integration should be used in cases where
+.. seo::
+    :description: Instructions for setting up Custom C++ components with ESPHome.
+    :image: language-cpp.svg
+    :keywords: C++, Custom
+
+.. warning::
+
+    :ref:`Custom Components are deprecated<a_note_about_custom_components>`, not recommended for new configurations and
+    will be removed from ESPHome in the ``2025.1.0`` release. Please look at creating a real ESPHome component and
+    "importing" it into your configuration with :doc:`/components/external_components`.
+
+    You can find some basic documentation on creating your own components at :ref:`contributing_to_esphome`.
+
+.. warning::
+
+    While we try to keep the ESPHome YAML configuration options as stable as possible, the ESPHome API is less
+    stable. If something in the APIs needs to be changed in order for something else to work, we will do so.
+
+
+This component can be used to create generic custom components in ESPHome
+using the C++ (Arduino) API. This component should be used in cases where
 none of ESPHome's abstraction layers (for example the "sensor", "binary sensor",
-"switch", etc concepts) work well for your integration.
+"switch", etc concepts) work well for your component.
 
 Please first read :doc:`/components/sensor/custom` guide, the same principles apply here.
 
@@ -49,6 +68,9 @@ And in YAML:
     - lambda: |-
         auto my_custom = new MyCustomComponent();
         return {my_custom};
+      components:
+      - id: my_custom_id
+
 
 Configuration variables:
 
@@ -64,8 +86,8 @@ Native API Custom Component
 ---------------------------
 
 If you want to communicate directly with Home Assistant via the :doc:`native API </components/api>`
-you can use the :apiclass:`CustomAPIDevice` class to declare services that can be executed from
-Home Assistant, as well as starting services in Home Assistant.
+you can use the :apiclass:`api::CustomAPIDevice` class to declare actions that can be performed from
+Home Assistant, as well as performing actions in Home Assistant.
 
 .. code-block:: cpp
 
@@ -120,7 +142,7 @@ Home Assistant, as well as starting services in Home Assistant.
       }
     };
 
-See also :apiclass:`CustomAPIDevice`.
+See also :apiclass:`api::CustomAPIDevice`.
 
 MQTT Custom Component
 ---------------------
@@ -154,7 +176,7 @@ custom components that communicate using MQTT.
           publish("the/other/topic", 42);
         }
       }
-      void on_json_message(JsonObject &root) {
+      void on_json_message(JsonObject root) {
         if (!root.containsKey("key"))
           return;
 
@@ -162,7 +184,7 @@ custom components that communicate using MQTT.
         // do something with Json Object
 
         // publish JSON using lambda syntax
-        publish_json("the/other/json/topic", [=](JsonObject &root2) {
+        publish_json("the/other/json/topic", [=](JsonObject root2) {
           root2["key"] = "Hello World";
         });
       }

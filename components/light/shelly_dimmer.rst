@@ -5,12 +5,11 @@ Shelly Dimmer
     :description: Instructions for setting up a Shelly Dimmer 2.
     :image: shellydimmer2.jpg
 
-The ``shelly_dimmer`` component adds support for the dimming and power-metering functionality that can be found the `Shelly Dimmer 2 <https://shelly.cloud/knowledge-base/devices/shelly-dimmer-2/>`_. The interaction with mains is done via an STM32 microcontroller that is flashed with an `open source firmware <https://github.com/jamesturton/shelly-dimmer-stm32>`_.
+The ``shelly_dimmer`` component adds support for the dimming and power-metering functionality that can be found the `Shelly Dimmer 2 <https://shelly.cloud/knowledge-base/devices/shelly-dimmer-2/>`_. The interaction with mains is done via an STM32 microcontroller that is automatically (when configured) flashed with an `open source firmware <https://github.com/jamesturton/shelly-dimmer-stm32>`_.
 A detailed analysis of the Shelly Dimmer 2 hardware is given `here <https://github.com/arendst/Tasmota/issues/6914>`_.
 
 Warning!!! At the time of writing there seems to be no way to revert back to the "stock firmware", because there seems to be no way to revert to firmware of the STM32 co-processor.
 
-The 
 
 .. figure:: ../../images/shellydimmer2.jpg
     :align: center
@@ -49,7 +48,6 @@ An example of a configuration of this component:
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART hub.
 
 .. note::
@@ -64,7 +62,6 @@ Configuration variables:
             baud_rate: 115200
 
 
-- **name** (**Required**, string): The name of the light.
 - **leading_edge** (*Optional*, boolean): `Dimming mode <https://en.wikipedia.org/wiki/Dimmer#Solid-state_dimmer>`_: ``true`` means leading edge, ``false`` is trailing edge. Defaults to ``false``.
 - **min_brightness** (*Optional*, int): Minimum brightness value on a scale from 0..1000, the default is 0.
 - **max_brightness** (*Optional*, int): Maximum brightness value on a scale from 0..1000, the default is 1000.
@@ -84,7 +81,7 @@ Configuration variables:
 
 .. note::
 
-    When flashing Shelly Dimmer with esphome for the first time, flashing the STM firmware is necessary too for the dimmer to work:
+    When flashing Shelly Dimmer with esphome for the first time, automatic flashing the STM firmware is necessary too for the dimmer to work and enabled by the following configuration.:
 
     .. code-block:: yaml
 
@@ -92,6 +89,7 @@ Configuration variables:
           version: "51.6" #<-- set version here
           update: true
 
+    There is no action required by the user to flash the STM32. There is no way to revert to stock firmware on the STM32 at the time of writing.
 
 - All other options from :ref:`Light <config-light>`.
 
